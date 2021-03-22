@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import './providers/auth.dart';
 import './providers/orders.dart';
 import 'package:provider/provider.dart';
 import './screens/products_overview_screen.dart';
@@ -18,6 +19,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
+        ChangeNotifierProvider(
+          create: (ctx) => Auth(),
+        ),
         ChangeNotifierProvider(
           create: (ctx) => Products(),
         ),
