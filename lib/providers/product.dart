@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
 class Product with ChangeNotifier {
@@ -29,14 +29,8 @@ class Product with ChangeNotifier {
     final oldStatus = isFavorite;
     isFavorite = !isFavorite;
     notifyListeners();
-    var params = {
-      'auth': token,
-    };
-    final url = Uri.https(
-      'first-flutter-backend-default-rtdb.firebaseio.com',
-      '/userFavorites/$userId/$id.json',
-      params,
-    );
+    final url =
+        'https://first-flutter-backend-default-rtdb.firebaseio.com/userFavorites/$userId/$id.json?auth=$token';
     try {
       final response = await http.put(
         url,

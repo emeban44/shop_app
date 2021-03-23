@@ -1,6 +1,7 @@
-import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'dart:convert';
+
+import 'package:flutter/widgets.dart';
+import 'package:http/http.dart' as http;
 
 import '../models/http_exception.dart';
 
@@ -32,18 +33,19 @@ class Auth with ChangeNotifier {
         'https://identitytoolkit.googleapis.com/v1/accounts:$urlSegment?key=AIzaSyCnIxEAim_qNNaxl3uLL4NdOsETuYARl-8';
     try {
       final response = await http.post(
-        Uri.parse(url),
-        body: json.encode({
-          'email': email,
-          'password': password,
-          'returnSecureToken': true,
-        }),
+        url,
+        body: json.encode(
+          {
+            'email': email,
+            'password': password,
+            'returnSecureToken': true,
+          },
+        ),
       );
       final responseData = json.decode(response.body);
       if (responseData['error'] != null) {
         throw HttpException(responseData['error']['message']);
       }
-      //  print(responseData['idToken']);
       _token = responseData['idToken'];
       _userId = responseData['localId'];
       _expiryDate = DateTime.now().add(
@@ -55,22 +57,15 @@ class Auth with ChangeNotifier {
       );
       notifyListeners();
     } catch (error) {
-      print('jeebiga');
       throw error;
     }
   }
 
-  Future<void> signup(
-    String email,
-    String password,
-  ) async {
+  Future<void> signup(String email, String password) async {
     return _authenticate(email, password, 'signUp');
   }
 
-  Future<void> login(
-    String email,
-    String password,
-  ) async {
+  Future<void> login(String email, String password) async {
     return _authenticate(email, password, 'signInWithPassword');
   }
 }
