@@ -1,3 +1,5 @@
+import 'dart:io';
+import 'dart:async';
 import 'package:flutter/material.dart';
 import '../models/http_exception.dart';
 import 'package:http/http.dart' as http;
@@ -43,6 +45,10 @@ class Products with ChangeNotifier {
 
   // var _showFavoritesOnly = false;
 
+  final String authToken;
+
+  Products(this.authToken, this._items);
+
   List<Product> get items {
     /*  if (_showFavoritesOnly) {
       return _items.where((prodItem) => prodItem.isFavorite).toList();
@@ -65,18 +71,29 @@ class Products with ChangeNotifier {
   } */
 
   Future<void> fetchAndSetProducts() async {
+    //  print(authToken);
+    var params = {
+      'auth': authToken,
+    };
     final url = Uri.https(
       'first-flutter-backend-default-rtdb.firebaseio.com',
       '/products.json',
+      params,
     );
+
     try {
+      print(url);
       final response = await http.get(url);
+      //      headers: {HttpHeaders.authorizationHeader: 'Basic $authToken'});
+      // print(response.body);
       final fetchedData = json.decode(response.body) as Map<String, dynamic>;
       final List<Product> loadedProducts = [];
       if (fetchedData == null) {
+        print('prazno');
         return;
       }
       fetchedData.forEach((prodId, prodData) {
+        print(prodId);
         loadedProducts.add(Product(
           id: prodId,
           title: prodData['title'],
@@ -89,6 +106,7 @@ class Products with ChangeNotifier {
       _items = loadedProducts;
       notifyListeners();
     } catch (error) {
+      print(error.toString());
       throw error;
     }
   }
